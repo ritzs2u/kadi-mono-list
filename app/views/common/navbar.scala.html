@@ -1,5 +1,4 @@
 @import b3.vertical.fieldConstructor
-@* 現在のログインユーザ(currentUserOpt)を渡せるようにする *@
 @(currentUserOpt: Option[User])(implicit messagesProvider: MessagesProvider, flash: Flash, request: RequestHeader)
 
 <header>
@@ -20,7 +19,7 @@ avbar-collapse-1" aria-expanded="false">
                    @* ログインしたときに利用できるメニューを描画する *@
                    @if(currentUserOpt.isDefined) {
                        <li>
-                           <a href="#">
+                           <a href="@routes.ItemsController.index(None)">
                                <span class="glyphicon glyphicon-plus" aria-hidden="true"></span>
                                @Messages("AddItem")
                            </a>
@@ -36,11 +35,10 @@ avbar-collapse-1" aria-expanded="false">
                            </a>
                            <ul class="dropdown-menu">
                                <li>
-                                   <a href="#">@Messages("MyPage")</a>
+                                   <a href="@routes.UsersController.show(currentUserOpt.get.id.get)">@Messages("MyPage")</a>
                                </li>
                                <li role="separator" class="divider"></li>
                                <li>
-                                   @* *@
                                    @b3.formCSRF(routes.AuthController.logout(), 'name -> "logout", 'style -> "display: none") {
                                        @b3.submit() {
                                            @Messages("LogOut")
@@ -52,7 +50,6 @@ avbar-collapse-1" aria-expanded="false">
                        </li>
                    } else {
                        <li><a href="@routes.SignUpController.index()">@Messages("Register")</a></li>
-                       @* リンクを更新 *@
                        <li><a href="@routes.AuthController.index()">@Messages("LogIn")</a></li>
                    }
                </ul>
