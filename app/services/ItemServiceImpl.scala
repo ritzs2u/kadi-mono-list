@@ -10,10 +10,12 @@ import com.github.j5ik2o.rakutenApi.itemSearch.{
   RakutenItemSearchAPIConfig,
   Item => RakutenItem
 }
-import models.{ Item, ItemUser }
+import models.{ Item, ItemUser, WantHaveType }
 import play.api.Configuration
 import play.api.libs.concurrent.ActorSystemProvider
-import scalikejdbc.{ sqls, DBSession }
+
+import scalikejdbc.{ sqls, DBSession, select, _}
+import scalikejdbc.interpolation.SQLSyntax.count
 
 import scala.concurrent.Future
 import scala.concurrent.duration._
@@ -80,6 +82,21 @@ class ItemServiceImpl @Inject()(configuration: Configuration, actorSystemProvide
      .toVector
  }
 
+  def getItemsByRanking(`type`: WantHaveType.Value)(implicit dbSession: DBSession): Try[Seq[(Item, Int)]] = Try {
+   val i  = Item.syntax("i")
+   val iu = ItemUser.syntax("iu")
+   withSQL {
+     select(count(i.id), i.resultAll)
+       .from(Item as i)
+       .leftJoin(ItemUser as iu)
+       .on(iu.itemId, i.id)
+       .where
+       .eq(iu.`type`, `type`.toString)
+       .groupBy(i.id)
+       .orderBy(count)
+       .desc
+   }.map(rs => (Item(i)(rs), rs.int(1))).list().apply().toVector
+ }
 
 
 
