@@ -3,7 +3,9 @@
 @import helper._
 @javascriptRouter("jsRoutes")(
    routes.javascript.ItemUserController.want,
-   routes.javascript.ItemUserController.doNotWant
+   routes.javascript.ItemUserController.doNotWant,
+   routes.javascript.ItemUserController.have,
+   routes.javascript.ItemUserController.doNotHave
 )
 
 <!DOCTYPE html>
@@ -18,7 +20,7 @@
        <script type="text/javascript" language="javascript" src="@routes.Assets.versioned("javascripts/main.js")"></script>
    </head>
    <body>
-       @common.navbar(currentUserOpt)
+     @common.navbar(currentUserOpt)
        <div class="container">
            @common.messages()
            @content
